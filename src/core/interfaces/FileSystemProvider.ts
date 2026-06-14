@@ -7,7 +7,7 @@
 export interface FileSystemProvider {
   /**
    * Abre a janela ou serviço padrão do SO para escolher arquivos/pastas.
-   * Por enquanto retorna os Files HTML nativos. Futuramente retornará URIs absolutas.
+   * Retorna um construto flexível. Browsers retornam 'File[]', Electron retorna strings de caminhos absolutos nativos.
    */
-  requestFolderSelection(): Promise<File[]>;
+  requestFolderSelection(): Promise<any[]>;
 }

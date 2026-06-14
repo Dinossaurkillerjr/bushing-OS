@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import type { MusicLibraryItem } from '../core/models/MusicLibraryItem';
 import { LocalLibraryScanner } from '../providers/local/LocalLibraryScanner';
 import { BrowserFileSystemProvider } from '../providers/local/BrowserFileSystemProvider';
+import { ElectronLibraryScanner } from '../providers/electron/ElectronLibraryScanner';
+import { ElectronFileSystemProvider } from '../providers/electron/ElectronFileSystemProvider';
 import { defaultPersistence } from '../providers/local/LocalStoragePersistenceProvider';
 
 export type SortKey = 'title' | 'artist' | 'album' | 'duration';
@@ -29,8 +31,11 @@ interface LibraryState {
   saveState: () => Promise<void>;
 }
 
-const scanner = new LocalLibraryScanner();
-const fsProvider = new BrowserFileSystemProvider();
+// @ts-ignore Pula verificação local pra flag não estourar em build step
+const isElectron = typeof window !== 'undefined' && typeof window.electronAPI !== 'undefined';
+
+const scanner = isElectron ? new ElectronLibraryScanner() : new LocalLibraryScanner();
+const fsProvider = isElectron ? new ElectronFileSystemProvider() : new BrowserFileSystemProvider();
 
 export const useLibraryStore = create<LibraryState>((set, get) => ({
   tracks: [],
